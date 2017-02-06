@@ -1,8 +1,11 @@
 /*****************************
 
+Nancy Li	nli006
+Vincent Chang	vchan019
+
 To run:
 
-./a.out < (filename)
+1. ./a.out < (filename)
 
 ******************************/
 
@@ -22,7 +25,7 @@ ALL [A-Za-z0-9]
 function	{pos += yyleng; printf("FUNCTION\n");}
 beginparams	{pos += yyleng; printf("BEGIN_PARAMS\n");}
 endparams	{pos += yyleng; printf("END_PARAMS\n");}
-beginlocals	{pos += yyleng; printf("BEGIN_LOCALS\n");}
+beginlocals	{pos += yyleng; printf("BEGIN_LOCALS\n");}	
 endlocals	{pos += yyleng; printf("END_LOCALS\n");}
 beginbody	{pos += yyleng; printf("BEGIN_BODY\n");}
 endbody		{pos += yyleng; printf("END_BODY\n");}
@@ -45,22 +48,23 @@ or		{pos += yyleng; printf("OR\n");}
 not		{pos += yyleng; printf("NOT\n");}
 true		{pos += yyleng; printf("TRUE\n");}
 false		{pos += yyleng; printf("FALSE\n");}
+return		{pos += yyleng; printf("RETURN\n");}
 
-\-		{pos += yyleng; printf("SUB\n");}
+\-		{pos += yyleng; printf("SUB\n");}	
 \+		{pos += yyleng; printf("ADD\n");}
 \*		{pos += yyleng; printf("MULT\n");}
 \/		{pos += yyleng; printf("DIV\n");}
 \%		{pos += yyleng; printf("MOD\n");}
 
-\=\=		{pos += yyleng; printf("EQ\n");}
+\=\=		{pos += yyleng; printf("EQ\n");}	
 \<\>		{pos += yyleng; printf("NEQ\n");}
 \<		{pos += yyleng; printf("LT\n");}
 \>		{pos += yyleng; printf("GT\n");}
 \<\=		{pos += yyleng; printf("LTE\n");}
 \>\=		{pos += yyleng; printf("GTE\n");}
 
-\;		{pos += yyleng; printf("SEMICOLON\n");}
-\:	 	{pos += yyleng; printf("COLON\n");}
+\;		{pos += yyleng; printf("SEMICOLON\n");}		
+\:	 	{pos += yyleng; printf("COLON\n");}	
 \,		{pos += yyleng; printf("COMMA\n");}
 \(		{pos += yyleng; printf("L_PAREN\n");}
 \)		{pos += yyleng; printf("R_PAREN\n");}

@@ -72,7 +72,7 @@ FILE * yyin;
 S:	funcs {printf("S -> funcs\n");}
 	;
 
-fun:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY {printf("fun -> whateer this is\n");}
+fun:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY {printf("fun -> FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS decalarations END_PARAMS BEGIN_LOCALS declarations END LOCALS BEGIN_BODY statements END_BODY\n");}
 	;
 
 funcs: 	{printf("funcs -> epsilon\n");}
@@ -105,21 +105,29 @@ boolean:	TRUE {printf("boolean -> TRUE\n");}
 	| FALSE {printf("boolean -> FALSE\n");}
 	;
 
-exp:	{printf("exp -> epsilon");}
-	| terminals
+exp:	terminals
+	| function
 	| exp ADD exp
+	| exp SUB exp
 	| exp MULT exp
 	| exp DIV exp
 	| exp MOD exp
 	;
 
-statements:	{printf("statements -> epsilon\n");}
-	| ident ASSIGN exp SEMICOLON {printf("statement -> ident ASSIGN exp SEMICOLON\n");}
-	| READ ident SEMICOLON {printf("statement -> READ ident SEMICOLON\n");}
-	| WRITE ident SEMICOLON {printf("statement -> WRITE ident SEMICOLON\n");}
-	| RETURN exp SEMICOLON {printf("statement -> RETURN exp SEMICOLON\n");}
-	| RETURN boolean SEMICOLON {printf("statement -> RETURN boolean SEMICOLON\n");}
-	| IF L_PAREN comp R_PAREN THEN statements
+function: ident L_PAREN exp R_PAREN 
+	;
+
+statements: {printf("statements-> epsilon\n");}
+	| statements1 statements {printf("statements -> statements1 statements\n");}
+	;
+
+statements1: ident ASSIGN exp SEMICOLON {printf("statements -> ident ASSIGN exp SEMICOLON\n");}
+	| READ ident SEMICOLON {printf("statements -> READ ident SEMICOLON\n");}
+	| WRITE ident SEMICOLON {printf("statements -> WRITE ident SEMICOLON\n");}
+	| RETURN exp SEMICOLON {printf("statements -> RETURN exp SEMICOLON\n");}
+	| RETURN boolean SEMICOLON {printf("statements -> RETURN boolean SEMICOLON\n");}
+	//| RETURN function SEMICOLON {printf("statements -> RETURN function SEMICOLON\n");}
+	| IF L_PAREN comp R_PAREN THEN {printf("statements -> if statement\n");}
 	;
 
 terminals: NUMBER {printf("terminals -> NUMBER\n");}

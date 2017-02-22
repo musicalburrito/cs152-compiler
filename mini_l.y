@@ -91,7 +91,6 @@ declarations:	{printf("declarations -> epsilon\n");}
 	;
 
 comp:	{printf("comp -> epsilon\n");}
-	| id {printf("comp -> id\n");}
 	| exp EQ exp {printf("comp -> terminals EQ terminals\n");}
 	| exp NEQ exp {printf("comp -> terminals NEQ terminals\n");}
 	| exp LT exp {printf("comp -> terminals LT terminals\n");}
@@ -119,7 +118,7 @@ exp:	terminals
 	| L_PAREN exp R_PAREN
 	;
 
-function: id L_PAREN exp R_PAREN 
+function: id L_PAREN exp R_PAREN
 	;
 
 statements: {printf("statements -> epsilon\n");}

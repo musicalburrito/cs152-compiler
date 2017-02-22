@@ -77,6 +77,7 @@ return		{pos += yyleng; return RETURN;}
 \/\/		{pos += yyleng;}
 \/\*.+\*\/	{pos += yyleng;}
 [ \t]+		{pos += yyleng;}
+##(.)*		{pos += yyleng;}
 
 {DIGIT}+ 	{pos += yyleng; return NUMBER;}
 {ALPHA}({ALL}|_)*_	{printf("Error at line %d, column %d : identifier \"%s\" cannot end with an underscore \n",yylineno, pos, yytext); pos += yyleng;}

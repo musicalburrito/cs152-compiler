@@ -1,15 +1,3 @@
-/*****************************
-
-Nancy Li	nli006
-Vincent Chang	vchan019
-
-To run:
-
-1. ./a.out < (filename)
-
-******************************/
-
-
 %option yylineno
 
 %{
@@ -27,7 +15,7 @@ ALL [A-Za-z0-9]
 function	{pos += yyleng; return FUNCTION;}
 beginparams	{pos += yyleng; return BEGIN_PARAMS;}
 endparams	{pos += yyleng; return END_PARAMS;}
-beginlocals	{pos += yyleng; return BEGIN_LOCALS;}	
+beginlocals	{pos += yyleng; return BEGIN_LOCALS;}
 endlocals	{pos += yyleng; return END_LOCALS;}
 beginbody	{pos += yyleng; return BEGIN_BODY;}
 endbody		{pos += yyleng; return END_BODY;}
@@ -52,21 +40,21 @@ true		{pos += yyleng; return TRUE;}
 false		{pos += yyleng; return FALSE;}
 return		{pos += yyleng; return RETURN;}
 
-\-		{pos += yyleng; return SUB;}	
+\-		{pos += yyleng; return SUB;}
 \+		{pos += yyleng; return ADD;}
 \*		{pos += yyleng; return MULT;}
 \/		{pos += yyleng; return DIV;}
 \%		{pos += yyleng; return MOD;}
 
-\=\=		{pos += yyleng; return EQ;}	
+\=\=		{pos += yyleng; return EQ;}
 \<\>		{pos += yyleng; return NEQ;}
 \<		{pos += yyleng; return LT;}
 \>		{pos += yyleng; return GT;}
 \<\=		{pos += yyleng; return LTE;}
 \>\=		{pos += yyleng; return GTE;}
 
-\;		{pos += yyleng; return SEMICOLON;}		
-\:	 	{pos += yyleng; return COLON;}	
+\;		{pos += yyleng; return SEMICOLON;}
+\:	 	{pos += yyleng; return COLON;}
 \,		{pos += yyleng; return COMMA;}
 \(		{pos += yyleng; return L_PAREN;}
 \)		{pos += yyleng; return R_PAREN;}
@@ -93,4 +81,4 @@ _{ALPHA}({ALL}*)	{printf("Error at line %d, column %d : identifier \"%s\" identi
 main(int argc, char *argv[]){
     yylex();
 
-}*/	
+}*/

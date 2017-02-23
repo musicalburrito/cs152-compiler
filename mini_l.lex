@@ -15,6 +15,7 @@ To run:
 %{
 #include "y.tab.h"
 int pos = 0;
+int line = 1;
 %}
 
 DIGIT [0-9]
@@ -73,7 +74,7 @@ return		{pos += yyleng; return RETURN;}
 \]		{pos += yyleng; return R_SQUARE_BRACKET;}
 \:\=		{pos += yyleng; return ASSIGN;}
 
-"\n" 		{pos = 0;}
+"\n" 		{pos = 0; line += 1;}
 \/\/		{pos += yyleng;}
 \/\*.+\*\/	{pos += yyleng;}
 [ \t]+		{pos += yyleng;}

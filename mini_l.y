@@ -1,8 +1,8 @@
 %{
 #include <stdio.h>
 void yyerror(char *s);
-extern int currLine;
-extern int currPos;
+extern int line;
+extern int pos;
 FILE * yyin;
 %}
 
@@ -12,7 +12,7 @@ FILE * yyin;
 }
 
 %error-verbose
-%start S
+%start PROGRAM
 
 %token FUNCTION
 %token BEGIN_PARAMS
@@ -62,101 +62,143 @@ FILE * yyin;
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET
 %token ASSIGN
-
 %token <stringVal> IDENTIFIER
 %token <intVal> NUMBER
 
 /* Grammar Rules */
 %%
 
-S:	funcs {printf("S -> funcs\n");}
+PROGRAM: Function {printf("PROGRAM -> Function\n");}
+	| PROGRAM Function {}
 	;
 
-fun:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY {printf("fun -> FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS decalarations END_PARAMS BEGIN_LOCALS declarations END LOCALS BEGIN_BODY statements END_BODY\n");}
+Function: FUNCTION IDENTIFIER SEMICOLON FirstDeclaration SecondDeclaration BEGIN_BODY StatementLoop END_BODY {printf("FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS Declaration SEMICOLON END_PARAMS BEGIN_LOCALS Declaration SEMICOLON END_LOCALS BEGIN_BODY Statement SEMICOLON END_BODY\n");}
 	;
 
-funcs: 	{printf("funcs -> epsilon\n");}
-	| fun funcs
+Declaration2: IdLoop1 COLON Declaration1
 	;
 
-id:	IDENTIFIER {printf("id -> IDENTIFIER \n");}
-	| IDENTIFIER COMMA id {printf("id -> IDENTIFIER COMMA id\n");}
+Declaration: Declaration2
+	| Declaration SEMICOLON Declaration2
+
+FirstDeclaration: BEGIN_PARAMS Declaration SEMICOLON END_PARAMS
+	| BEGIN_PARAMS END_PARAMS
+
+SecondDeclaration: BEGIN_LOCALS Declaration SEMICOLON END_LOCALS
+	| BEGIN_LOCALS END_LOCALS
+
+Declaration1: INTEGER
+	| ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER
 	;
 
-declaration:	id COLON types
+IdLoop1: IDENTIFIER
+	| IdLoop1 COMMA IDENTIFIER
 	;
 
-declarations:	{printf("declarations -> epsilon\n");}
-	| declaration SEMICOLON declarations {printf("declarations -> declaration SEMICOLON declarations\n");}
+Statement1: Statement SEMICOLON
 	;
 
-comp:	{printf("comp -> epsilon\n");}
-	| exp EQ exp {printf("comp -> terminals EQ terminals\n");}
-	| exp NEQ exp {printf("comp -> terminals NEQ terminals\n");}
-	| exp LT exp {printf("comp -> terminals LT terminals\n");}
-	| exp GT exp {printf("comp -> terminals GT terminals\n");}
-	| exp LTE exp {printf("comp -> terminals LTE terminals\n");}
-	| exp GTE exp {printf("comp -> terminals GTE terminals\n");}
-	| TRUE {printf("boolean -> TRUE\n");}
-	| FALSE {printf("boolean -> FALSE\n");}
+Statement: Var ASSIGN Expression
+	| READ VarLoop
+	| WRITE VarLoop
+	| CONTINUE
+	| RETURN Expression
+	| If ENDIF
+	| While
+	| Do
 	;
 
-boolean: {printf("boolean -> epsilon\n");}	
-	| NOT {printf("boolean -> NOT\n");}
-	| OR {printf("boolean -> OR\n");}
-	| AND {printf("boolean -> AND\n");}
+While: WHILE BoolExpr BEGIN_LOOP StatementLoop END_LOOP
 	;
 
-exp:	terminals
-	| function
-	| array
-	| exp ADD exp
-	| exp SUB exp
-	| exp MULT exp
-	| exp DIV exp
-	| exp MOD exp
-	| L_PAREN exp R_PAREN
+Do: DO BEGIN_LOOP StatementLoop END_LOOP WHILE BoolExpr
 	;
 
-function: id L_PAREN exp R_PAREN
+If: IF BoolExpr THEN StatementLoop
+	| If ELSE StatementLoop
 	;
 
-statements: {printf("statements -> epsilon\n");}
-	| statements1 statements {printf("statements -> statements1 statements\n");}
+BoolExpr: RAE
+	| BoolExpr OR RAE
 	;
 
-statements1: assignStatements SEMICOLON {printf("statements1 -> assignStatements SEMICOLON\n");}
-	| READ id SEMICOLON {printf("statements1 -> READ id SEMICOLON\n");}
-	| WRITE id SEMICOLON {printf("statements1 -> WRITE id SEMICOLON\n");}
-	| returnStatements SEMICOLON {printf("statements1 -> returnStatements SEMICOLON\n");}
-	| whileStatements SEMICOLON {printf("statements1 -> whileStatments SEMICOLON\n");}
-	| ifStatements SEMICOLON {printf("statements1 -> ifStatement SEMICOLON\n");}
+RAE:	RE
+	| RAE AND RE
 	;
 
-whileStatements: WHILE comp BEGIN_LOOP statements END_LOOP {printf("whileStatements -> WHILE comp BEGIN_LOOP statements END_LOOP\n");}
-
-assignStatements: id ASSIGN exp {printf("assignStatements -> id ASSIGN exp\n");}
-	| array ASSIGN exp {printf("assignStatements -> array ASSIGN exp\n");}
+RE: NOT RE1
+	| RE1
 	;
 
-returnStatements: RETURN exp {printf("returnStatements -> RETURN exp\n");}
-	| RETURN boolean {printf("returnStatements -> RETURN boolean\n");}
-
-ifStatements: IF L_PAREN comp R_PAREN THEN statements ENDIF {printf("ifStatements -> L_PAREN comp BEGIN_LOOP statements END_LOOP SEMICOLON\n");}
-	| IF comp THEN statements ENDIF {printf("ifStatements -> comp THEN statements ENDIF\n");}
-	| IF L_PAREN comp R_PAREN THEN statements ELSE statements {printf("ifStatements -> IF L_PAREN comp BEGIN_LOOP statements ELSE statement\n");}
-	| IF comp THEN statements ELSE statements ENDIF {printf("ifStatements -> IF comp THEN statements ELSE statements ENDIF\n");}
+RE1: Expression Comp Expression
+	| TRUE
+	| FALSE
+	| L_PAREN BoolExpr R_PAREN
 	;
 
-terminals: NUMBER {printf("terminals -> NUMBER\n");}
-	| IDENTIFIER {printf("terminals -> IDENTIFIER\n");}
+Comp: EQ
+	| NEQ
+	| LT
+	| GT
+	| GTE
+	| LTE
 	;
 
-array: ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET {printf("array -> id L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET\n");}
-	| id L_SQUARE_BRACKET terminals R_SQUARE_BRACKET
+StatementLoop: Statement1
+	| StatementLoop Statement1
+	;
 
-types: INTEGER {printf("types -> INTEGER\n");}
-	| array OF INTEGER
+VarLoop: Var
+	| VarLoop COMMA Var
+	;
+
+Var: IDENTIFIER {printf("Var -> IDENTIFIER\n");}
+	| IDENTIFIER L_SQUARE_BRACKET Expression R_SQUARE_BRACKET
+	;
+
+//Var2: {printf("Var2 -> epsilon\n");}
+//	| L_SQUARE_BRACKET Expression R_SQUARE_BRACKET {printf("Var2 -> L_SQUARE_BRACKET Expression R_SQUARE_BRACKET\n");}
+//	;
+
+Expression: MultiplicativeExpr
+	| Expression ADD MultiplicativeExpr
+	| Expression SUB MultiplicativeExpr
+	;
+
+MultiplicativeExpr: Term {printf("Multiplcative-Expr -> Term\n");}
+	| MultiplicativeExpr MultMultExpr {printf("MultiplicativeExpr -> MULT MultiplicativeExpr\n");}
+	| MultiplicativeExpr MultDiv {printf("MultiplicativeExpr -> DIV MultiplicativeExpr\n");}
+	| MultiplicativeExpr MultMod {printf("MultiplicativeExpr -> MOD MultplicativeExpr\n");}
+	;
+
+MultMultExpr: MULT Term
+	;
+
+MultDiv: DIV Term
+	;
+
+MultMod: MOD Term
+	;
+
+Term: SUB Term2
+	| Term2
+	| IDENTIFIER L_PAREN R_PAREN
+	| IDENTIFIER L_PAREN Term3 R_PAREN
+	;
+
+Term2: Var
+	| NUMBER
+	| L_PAREN Expression R_PAREN
+	;
+
+Term3: Expression
+	| Term3 Term3a
+	;
+
+Term3a: COMMA Expression
+	;
+
+//Term4: R_PAREN
 
 
 %%
@@ -167,5 +209,6 @@ int main(int argv, char **argc){
 }
 
 void yyerror(char *s){
-	printf("cats are better than dogs: %s", s);
+	printf("Error: %s \nAt position: %d \nAt line: %d \n", s, pos, line);
+	return;
 }

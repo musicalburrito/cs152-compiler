@@ -2,6 +2,7 @@
 
 %{
 #include "y.tab.h"
+#include <string.h>
 int pos = 0;
 int line = 1;
 %}
@@ -68,11 +69,11 @@ return		{pos += yyleng; return RETURN;}
 [ \t]+		{pos += yyleng;}
 ##(.)*		{pos += yyleng;}
 
-{DIGIT}+ 	{pos += yyleng; return NUMBER;}
+{DIGIT}+ 	{pos += yyleng; yylval.intVal = atoi(yytext); return NUMBER;}
 {ALPHA}({ALL}|_)*_	{printf("Error at line %d, column %d : identifier \"%s\" cannot end with an underscore \n",yylineno, pos, yytext); pos += yyleng;}
 _{ALPHA}({ALL}*)	{printf("Error at line %d, column %d : identifier \"%s\" identifier cannot begin with an underscore \n",yylineno, pos, yytext); pos += yyleng;}
 {DIGIT}{ALPHA}({ALL}*) {printf("Error at line %d, column %d : identifier \"%s\" must begin with a letter\n",yylineno, pos, yytext); pos += yyleng;}
-{ALPHA}({ALL}|_)* {pos += yyleng; return IDENTIFIER;}
+{ALPHA}({ALL}|_)* {pos += yyleng; strcpy(yylval.stringVal,yytext); return IDENTIFIER;}
 [^{ALL}]		{pos += yyleng; printf("Error at line %d, column %d : unrecognized symbol \"%s\"\n", yylineno, pos, yytext);}
 
 %%
